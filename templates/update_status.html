@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Status</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<body>
+    <div class="ui container">
+        <h2 class="ui center aligned header">Update Document Status for Batch ID: {{ batch.batch_id }}</h2>
+        
+        {% include 'menu.html' %}
+        
+        <form class="ui form" method="POST">
+            <div class="field">
+                <label>Location</label>
+                <select name="location" required>
+                    <option value="ผู้รับเอกสารต้นทาง">ผู้รับเอกสารต้นทาง</option>
+                    <option value="พนักงานคัดแยกเอกสาร">พนักงานคัดแยกเอกสาร</option>
+                    <option value="ผู้ส่งเอกสารปลายทาง">ผู้ส่งเอกสารปลายทาง</option>
+                    <option value="ผู้รับเอกสารปลายทาง">ผู้รับเอกสารปลายทาง</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Signed By</label>
+                <input type="text" name="signed_by" placeholder="Enter Name" required>
+            </div>
+            <button class="ui button primary" type="submit">Update Status</button>
+        </form>
+
+        <h3>Current Statuses</h3>
+        <div class="ui relaxed divided list">
+            {% for status in batch.statuses %}
+                <div class="item">
+                    <div class="content">
+                        <p><strong>Location:</strong> {{ status.location }}</p>
+                        <p><strong>Signed By:</strong> {{ status.signed_by }}</p>
+                        <p><strong>Signed At:</strong> {{ status.signed_at.strftime('%Y-%m-%d %H:%M:%S') if status.signed_at else 'N/A' }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

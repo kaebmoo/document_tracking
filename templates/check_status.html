@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check Document Status</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<body>
+    <div class="ui container">
+        <h2 class="ui center aligned header">Check Document Status</h2>
+        
+        {% include 'menu.html' %}
+        
+        <form class="ui form" method="POST">
+            <div class="field">
+                <input type="text" name="query" placeholder="Enter Batch ID, Sender, or Receiver" value="{{ search_query or '' }}" required>
+            </div>
+            <button class="ui button primary" type="submit">Search</button>
+        </form>
+
+        {% if results %}
+            <h3>Document Status</h3>
+            <div class="ui relaxed divided list">
+                {% for result in results %}
+                    <div class="item">
+                        <h4>Batch ID: {{ result.batch.batch_id }}</h4>
+                        <p><strong>Sender:</strong> {{ result.batch.sender_name }} 
+                        <strong>Receiver:</strong> {{ result.batch.receiver_name }}</p>
+                        <p><strong>Created At:</strong> {{ result.batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+
+                        <h5>Status History:</h5>
+                        <ul>
+                            {% for status in result.statuses %}
+                                <li>
+                                    <strong>Location:</strong> {{ status.location }} |
+                                    <strong>Signed By:</strong> {{ status.signed_by }} |
+                                    <strong>Signed At:</strong> {{ status.signed_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <h5>Documents in this Batch:</h5>
+                        <ul>
+                            {% for document in result.documents %}
+                                <li><strong>Document ID:</strong> {{ document.doc_id }} - <strong>Title:</strong> {{ document.title }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="ui pagination menu">
+                {% if batches.has_prev %}
+                    <a class="item" href="{{ url_for('check_status', page=batches.prev_num) }}">Previous</a>
+                {% else %}
+                    <div class="disabled item">Previous</div>
+                {% endif %}
+                
+                {% for page_num in batches.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        {% if page_num == batches.page %}
+                            <div class="active item">{{ page_num }}</div>
+                        {% else %}
+                            <a class="item" href="{{ url_for('check_status', page=page_num) }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% else %}
+                        <div class="disabled item">…</div>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if batches.has_next %}
+                    <a class="item" href="{{ url_for('check_status', page=batches.next_num) }}">Next</a>
+                {% else %}
+                    <div class="disabled item">Next</div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="ui message">
+                <p>No documents found.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

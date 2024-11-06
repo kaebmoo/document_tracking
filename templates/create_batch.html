@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Document Batch</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+</head>
+<body>
+    <div class="ui container">
+        <h2 class="ui center aligned header">Create Document Batch</h2>
+        
+        {% include 'menu.html' %}
+        
+        <form class="ui form" method="POST">
+            <div class="field">
+                <label>Sender Name</label>
+                <input type="text" name="sender_name" placeholder="Sender Name" required>
+            </div>
+            <div class="field">
+                <label>Receiver Name</label>
+                <input type="text" name="receiver_name" placeholder="Receiver Name" required>
+            </div>
+            
+            <h4>Documents in Batch</h4>
+            <div id="document-list">
+                <div class="field">
+                    <label>Document Title</label>
+                    <input type="text" name="document_titles" placeholder="Document Title" required>
+                </div>
+            </div>
+            
+            <button type="button" class="ui button" onclick="addDocumentField()">Add Another Document</button>
+            <button type="submit" class="ui button primary">Create Batch</button>
+        </form>
+
+        {% if batch %}
+            <div class="ui segment">
+                <h3>Batch Created Successfully</h3>
+                <p><strong>Batch ID:</strong> {{ batch.batch_id }}</p>
+                <p><strong>Sender:</strong> {{ batch.sender_name }} <strong>Receiver:</strong> {{ batch.receiver_name }}</p>
+                <p><strong>Created At:</strong> {{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Status:</strong> ผู้ส่งเอกสารต้นทาง</p>
+                <p><strong>Last Updated:</strong> {{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                
+                <h4>Documents in this Batch:</h4>
+                <ul>
+                    {% for document in documents %}
+                        <li><strong>Document ID:</strong> {{ document.doc_id }} <br> <strong>Title:</strong> {{ document.title }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h4>QR Code</h4>
+                <img src="{{ url_for('static', filename='qr_codes/' ~ batch.batch_id ~ '.png') }}" alt="QR Code for Batch {{ batch.batch_id }}">
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function addDocumentField() {
+            const documentList = document.getElementById('document-list');
+            const newField = document.createElement('div');
+            newField.classList.add('field');
+            newField.innerHTML = '<label>Document Title</label><input type="text" name="document_titles" placeholder="Document Title" required>';
+            documentList.appendChild(newField);
+        }
+    </script>
+</body>
+</html>
