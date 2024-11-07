@@ -10,7 +10,7 @@
         <h2 class="ui center aligned header">Create Document Batch</h2>
         
         {% include 'menu.html' %}
-        
+
         <form class="ui form" method="POST">
             <div class="field">
                 <label>Sender Name</label>
@@ -34,24 +34,37 @@
         </form>
 
         {% if batch %}
-            <div class="ui segment">
-                <h3>Batch Created Successfully</h3>
-                <p><strong>Batch ID:</strong> {{ batch.batch_id }}</p>
-                <p><strong>Sender:</strong> {{ batch.sender_name }} <strong>Receiver:</strong> {{ batch.receiver_name }}</p>
-                <p><strong>Created At:</strong> {{ batch.created_at | datetimeformat }}</p>
-                <p><strong>Status:</strong> ผู้ส่งเอกสารต้นทาง</p>
-                <p><strong>Last Updated:</strong> {{ batch.created_at | datetimeformat }}</p>
-                
-                <h4>Documents in this Batch:</h4>
-                <ul>
-                    {% for document in documents %}
-                        <li><strong>Document ID:</strong> {{ document.doc_id }} <br> <strong>Title:</strong> {{ document.title }}</li>
-                    {% endfor %}
-                </ul>
-
-                <h4>QR Code</h4>
-                <img src="{{ url_for('static', filename='qr_codes/' ~ batch.batch_id ~ '.png') }}" alt="QR Code for Batch {{ batch.batch_id }}">
+        <div class="ui segment" style="margin-top: 20px;">
+            <div style="display: inline-flex; align-items: center;">
+                <div style="flex-grow: 1;">
+                    <h4>Batch ID: {{ batch.batch_id }}</h4>
+                    <p><strong>Sender:</strong> {{ batch.sender_name }}</p>
+                    <p><strong>Receiver:</strong> {{ batch.receiver_name }}</p>
+                    <p><strong>Created At:</strong> {{ batch.created_at | datetimeformat }}</p>
+                </div>
+                <div style="padding-left: 200px;">
+                    <img src="{{ qr_path }}" alt="QR Code for Batch {{ batch.batch_id }}" style="width: 100px; height: 100px;">
+                </div>
             </div>
+            
+            <h5>Status History:</h5>
+            <ul>
+                {% for status in statuses %}
+                    <li>
+                        <strong>Location:</strong> {{ status.location }} |
+                        <strong>Signed By:</strong> {{ status.signed_by }} |
+                        <strong>Signed At:</strong> {{ status.signed_at | datetimeformat }}
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <h5>Documents in this Batch:</h5>
+            <ul>
+                {% for document in documents %}
+                    <li><strong>Document ID:</strong> {{ document.doc_id }} - <strong>Title:</strong> {{ document.title }}</li>
+                {% endfor %}
+            </ul>
+        </div>
         {% endif %}
     </div>
 

@@ -18,6 +18,8 @@ def generate_batch_id():
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///documents.db'
 app.config['SECRET_KEY'] = 'your_secret_key'
+# กำหนด BASE_URL เพื่อให้ยืดหยุ่นในการตั้งค่า URL ของเซิร์ฟเวอร์
+BASE_URL = "http://127.0.0.1:5000"  # เปลี่ยน URL ได้ตามที่ต้องการ
 db.init_app(app)
 
 # ตั้งค่า Flask-Mail
@@ -55,7 +57,7 @@ def send_status_update_email(doc_id, title, status, receiver_email):
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-# ฟังก์ชันสำหรับสร้าง batch พร้อมสร้าง QR Code และบันทึกสถานะเริ่มต้น
+# ฟังก์ชันสำหรับสร้าง batch พร้อมสร้าง QR Code ที่เชื่อมโยงกับ search_batches
 @app.route('/create_batch', methods=['GET', 'POST'])
 def create_batch():
     if request.method == 'POST':
@@ -87,8 +89,11 @@ def create_batch():
             db.session.add(new_document)
             documents.append(new_document)
 
-        # สร้าง QR Code สำหรับ batch
-        qr = qrcode.make(batch.batch_id)
+        # สร้าง URL ที่จะใช้ใน QR Code
+        qr_url = f"{BASE_URL}/search_batches?query={batch.batch_id}"
+        
+        # สร้าง QR Code สำหรับ URL
+        qr = qrcode.make(qr_url)
         qr_path = os.path.join('static', 'qr_codes', f"{batch.batch_id}.png")
         qr.save(qr_path)
 
@@ -99,7 +104,6 @@ def create_batch():
         return render_template('create_batch.html', batch=batch, documents=documents, qr_path=qr_path)
 
     return render_template('create_batch.html')  # ไม่แสดง batch_id ตอนเริ่ม
-
 
 # ฟังก์ชันค้นหา batch เพื่อเตรียมสำหรับการอัปเดตสถานะ
 @app.route('/search_batches', methods=['GET', 'POST'])
