@@ -34,7 +34,7 @@
                                     <h4>Batch ID: {{ result.batch.batch_id }}</h4>
                                     <p><strong>Sender:</strong> {{ result.batch.sender_name }} 
                                        <strong>Receiver:</strong> {{ result.batch.receiver_name }}</p>
-                                    <p><strong>Created At:</strong> {{ result.batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                    <p><strong>Created At:</strong> {{ result.batch.created_at | datetimeformat }}</p>
                                 </div>
                                 <div style="padding-left: 200px;">
                                     <img src="{{ url_for('static', filename='qr_codes/' ~ result.batch.batch_id ~ '.png') }}" 
@@ -49,7 +49,7 @@
                                     <li>
                                         <strong>Location:</strong> {{ status.location }} |
                                         <strong>Signed By:</strong> {{ status.signed_by }} |
-                                        <strong>Signed At:</strong> {{ status.signed_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                                        <strong>Signed At:</strong> {{ status.signed_at | datetimeformat }}
                                     </li>
                                 {% endfor %}
                             </ul>

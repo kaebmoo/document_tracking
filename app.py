@@ -6,6 +6,7 @@ import qrcode
 import os
 from uuid import uuid4
 from datetime import datetime, timezone
+import pytz  # ใช้ pytz สำหรับการแปลง timezone
 import random
 import string
 
@@ -13,7 +14,6 @@ def generate_batch_id():
     prefix = ''.join(random.choices(string.ascii_uppercase, k=2))  # ตัวอักษรสองตัว
     suffix = ''.join(random.choices(string.digits, k=6))  # ตัวเลขหกตัว
     return f"{prefix}{suffix}"
-
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///documents.db'
@@ -29,6 +29,18 @@ app.config['MAIL_PASSWORD'] = 'your_email_password'     # แทนที่ด�
 app.config['MAIL_DEFAULT_SENDER'] = 'your_email@example.com'
 
 mail = Mail(app)
+
+# ฟิลเตอร์สำหรับแปลงเวลา
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format='%Y-%m-%d %H:%M:%S'):
+    if value.tzinfo is None:
+        # ถ้าเวลายังเป็น naive datetime (ไม่มี timezone) กำหนดเป็น UTC ก่อน
+        value = value.replace(tzinfo=timezone.utc)
+    
+    # แปลงจาก UTC ไปยัง timezone ท้องถิ่นที่ต้องการ
+    local_timezone = pytz.timezone("Asia/Bangkok")  # เปลี่ยน timezone ตามต้องการ
+    local_time = value.astimezone(local_timezone)
+    return local_time.strftime(format)
 
 # ฟังก์ชันส่งอีเมลแจ้งเตือนเมื่ออัปเดตสถานะ
 def send_status_update_email(doc_id, title, status, receiver_email):

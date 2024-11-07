@@ -38,9 +38,9 @@
                 <h3>Batch Created Successfully</h3>
                 <p><strong>Batch ID:</strong> {{ batch.batch_id }}</p>
                 <p><strong>Sender:</strong> {{ batch.sender_name }} <strong>Receiver:</strong> {{ batch.receiver_name }}</p>
-                <p><strong>Created At:</strong> {{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Created At:</strong> {{ batch.created_at | datetimeformat }}</p>
                 <p><strong>Status:</strong> ผู้ส่งเอกสารต้นทาง</p>
-                <p><strong>Last Updated:</strong> {{ batch.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Last Updated:</strong> {{ batch.created_at | datetimeformat }}</p>
                 
                 <h4>Documents in this Batch:</h4>
                 <ul>
