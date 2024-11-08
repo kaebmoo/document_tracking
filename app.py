@@ -117,7 +117,8 @@ def search_batches():
     if request.method == 'POST' or (search_query and search_query.strip()):
         # ถ้าไม่มีค่า query ให้เป็นการเรียกข้อมูลทั้งหมด
         if not search_query:
-            search_query = request.form.get('query', '')
+            search_query = request.form['query']
+            
 
         # ค้นหา batch ที่ตรงกับ query ใน `batch_id`, `sender_name`, หรือ `receiver_name`
         batches = DocumentBatch.query.filter(
