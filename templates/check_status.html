@@ -64,6 +64,23 @@
                     </div>
                 {% endfor %}
             </div>
+
+            <!-- Pagination -->
+            <div class="ui pagination menu">
+                {% if batches.has_prev %}
+                    <a class="item" href="{{ url_for('check_status', page=batches.prev_num, query=search_query) }}">Previous</a>
+                {% endif %}
+                {% for p in batches.iter_pages() %}
+                    {% if p %}
+                        <a class="item {% if p == batches.page %}active{% endif %}" href="{{ url_for('check_status', page=p, query=search_query) }}">{{ p }}</a>
+                    {% else %}
+                        <span class="item">...</span>
+                    {% endif %}
+                {% endfor %}
+                {% if batches.has_next %}
+                    <a class="item" href="{{ url_for('check_status', page=batches.next_num, query=search_query) }}">Next</a>
+                {% endif %}
+            </div>
         {% endif %}
     </div>
 </body>

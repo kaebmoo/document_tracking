@@ -13,16 +13,12 @@
         
         <form class="ui form" method="POST">
             <div class="field">
-                <input type="text" name="query" placeholder="Enter Batch ID, Sender, or Receiver" value="{{ search_query or '' }}" required>
+                <input type="text" name="query" placeholder="Enter Batch ID, Sender, or Receiver" value="{{ search_query or '' }}">
             </div>
             <button class="ui button primary" type="submit">Search</button>
         </form>
 
-        {% if search_query is defined and search_query and not results %}
-            <div class="ui message">
-                <p>No batches found.</p>
-            </div>
-        {% elif results %}
+        {% if search_query and results %}
             <h3>Search Results</h3>
             <div class="ui relaxed divided list">
                 {% for result in results | sort(attribute='batch.created_at', reverse=True) %}
@@ -66,6 +62,23 @@
                         </div>
                     </div>
                 {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            <div class="ui pagination menu">
+                {% if batches.has_prev %}
+                    <a class="item" href="{{ url_for('search_batches', page=batches.prev_num, query=search_query) }}">Previous</a>
+                {% endif %}
+                {% for p in batches.iter_pages() %}
+                    {% if p %}
+                        <a class="item {% if p == batches.page %}active{% endif %}" href="{{ url_for('search_batches', page=p, query=search_query) }}">{{ p }}</a>
+                    {% else %}
+                        <span class="item">...</span>
+                    {% endif %}
+                {% endfor %}
+                {% if batches.has_next %}
+                    <a class="item" href="{{ url_for('search_batches', page=batches.next_num, query=search_query) }}">Next</a>
+                {% endif %}
             </div>
         {% endif %}
     </div>

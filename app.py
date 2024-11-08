@@ -109,34 +109,33 @@ def create_batch():
 @app.route('/search_batches', methods=['GET', 'POST'])
 def search_batches():
     search_query = request.args.get('query', None)
+    page = request.args.get('page', 1, type=int)
+    per_page = 50
     results = []
-    
-    if request.method == 'POST' or search_query:
-        # รับค่า query จากฟอร์มหรือจากพารามิเตอร์
+
+    # ตรวจสอบว่ามีการค้นหาหรือไม่
+    if request.method == 'POST' or (search_query and search_query.strip()):
+        # ถ้าไม่มีค่า query ให้เป็นการเรียกข้อมูลทั้งหมด
         if not search_query:
-            search_query = request.form['query']
+            search_query = request.form.get('query', '')
 
         # ค้นหา batch ที่ตรงกับ query ใน `batch_id`, `sender_name`, หรือ `receiver_name`
         batches = DocumentBatch.query.filter(
             (DocumentBatch.batch_id.like(f"%{search_query}%")) |
             (DocumentBatch.sender_name.like(f"%{search_query}%")) |
             (DocumentBatch.receiver_name.like(f"%{search_query}%"))
-        ).all()
-
-        for batch in batches:
+        ).paginate(page=page, per_page=per_page)
+        
+        for batch in batches.items:
             documents = Document.query.filter_by(batch_id=batch.batch_id).all()
             statuses = DocumentStatus.query.filter_by(batch_id=batch.batch_id).order_by(DocumentStatus.signed_at.asc()).all()
-
             results.append({
                 'batch': batch,
                 'documents': documents,
                 'statuses': statuses
             })
-
-        if not results:
-            flash('No batches found.', 'warning')
     
-    return render_template('search_batches.html', results=results, search_query=search_query)
+    return render_template('search_batches.html', results=results, search_query=search_query, batches=batches if results else None)
 
 # ฟังก์ชันสำหรับอัปเดตสถานะของเอกสาร
 @app.route('/update_status/<batch_id>', methods=['GET', 'POST'])
