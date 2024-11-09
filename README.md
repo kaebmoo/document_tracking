@@ -1,4 +1,5 @@
 
+
 ```markdown
 # Document Tracking System
 
@@ -108,7 +109,7 @@ For production, configure a WSGI server like Gunicorn or uWSGI and use a reverse
 
 ## License
 
-This project is licensed under the GPL-3.0 License.
+This project is licensed under the MIT License.
 
 ---
 
