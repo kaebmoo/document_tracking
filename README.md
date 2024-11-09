@@ -1,3 +1,5 @@
+readme.md สร้างโดย chatgpt ด้วย prompt "ช่วยเขียน readme.md ให้ด้วยสิ"
+
 ได้เลยครับ นี่คือโครงสร้างของไฟล์ `README.md` ที่อธิบายวิธีการใช้งานและโครงสร้างของโปรเจกต์นี้ รวมถึงคำแนะนำในการติดตั้ง
 
 ```markdown
@@ -125,4 +127,3 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - **Configuration**: Explains configuration of environment variables and timezone adjustments.
 - **Usage**: Describes the main pages of the app and their purposes.
 - **File Structure**: Shows the project layout to help new users navigate
-readme.md สร้างโดย chatgpt ด้วย prompt "ช่วยเขียน readme.md ให้ด้วยสิ"
